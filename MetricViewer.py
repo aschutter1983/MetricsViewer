@@ -129,15 +129,15 @@ if uploaded_files:
                 # Assign 'min' or 'max' to the corresponding sub_key
                 result_dict[main_key][sub_key][min_max] = min_max
 
-    filtered_cols = []
-    
-    single_entries, other_entries = func.filter_keys_with_multiple_sub_keys(result_dict)
-    
-    filtered_cols = func.flatten_dict_to_list(other_entries)
-    
+        filtered_cols = []
+        
+        single_entries, other_entries = func.filter_keys_with_multiple_sub_keys(result_dict)
+        
+        filtered_cols = func.flatten_dict_to_list(other_entries)
+        
         with st.sidebar:
             st.header("Aggregation Filter",divider="blue")
-
+    
             return_selected = tree_select(func.convert_to_nodes_format(single_entries),only_leaf_checkboxes=True)
 
     filtered_cols += return_selected['checked']
