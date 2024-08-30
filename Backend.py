@@ -10,9 +10,6 @@ image_light = Image.open(LOGO_IMAGE_LIGHT)
 PAGE_IMAGE = "images/gmsitelogo.png"
 image_home = Image.open(PAGE_IMAGE)
 
-SQL_IMAGE = "images/SQL_Layout.png"
-image_sql = Image.open(SQL_IMAGE)
-
 custom_css = {
     ".ag-header-cell-label": {"justify-content": "center"},
     ".ag-header-group-cell-label": {"justify-content": "center"},
