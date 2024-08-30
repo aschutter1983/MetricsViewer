@@ -86,8 +86,6 @@ if uploaded_files:
     st.dataframe(df_converted, use_container_width=True,hide_index=True)
 
     st.markdown("""   """)
-    st.header("Filtered Data",divider="blue")
-    st.markdown("""   """)
 
     with st.sidebar:
 
@@ -140,67 +138,70 @@ if uploaded_files:
     
             return_selected = tree_select(func.convert_to_nodes_format(single_entries),only_leaf_checkboxes=True)
 
-    filtered_cols += return_selected['checked']
+        filtered_cols += return_selected['checked']
 
-    df_filtered = df_converted[filtered_cols]
+        df_filtered = df_converted[filtered_cols]
 
-    st.dataframe(df_filtered, use_container_width=True,hide_index=True)
+        st.header("Filtered Data",divider="blue")
+        st.markdown("""   """)
 
-    selected_cols = st.multiselect(
-                        'Select Metrics to Filter:', df_filtered.columns)
-    st.markdown("""   """)
-  
-    if selected_cols:
+        st.dataframe(df_filtered, use_container_width=True,hide_index=True)
+
+        selected_cols = st.multiselect(
+                            'Select Metrics to Filter:', df_filtered.columns)
+        st.markdown("""   """)
     
-        #For each selected filter, add a slider for max and min and allow user to adjust
-        sliders = {}
-        def display_sliders():
-            for col in selected_cols:
-                min_val = float(df_converted[col].min())
-                max_val = float(df_converted[col].max())
-                sliders[col] = st.slider(col, value=[min_val,max_val],min_value=min_val,max_value=max_val)
-            return sliders
+        if selected_cols:
         
-        sliders = display_sliders()
-
-        # Filter raw_data based on sliders
-        filtered_data = df_filtered.copy()
-        for col, slider_range in sliders.items():
-            filtered_data = filtered_data[(filtered_data[col] >= slider_range[0]) & (filtered_data[col] <= slider_range[1])]
-
-        st.markdown("""   """)
-        st.header("Resultant Data",divider="blue")
-
-        if len(selected_cols) > 1:
-
-            # Add Parrallel Coordinates Plot for all sliders in filtered data
-            fig_par =  px.parallel_coordinates(filtered_data, 
-                                dimensions=selected_cols,
-                                color_continuous_scale=px.colors.diverging.Tealrose,
-                                color_continuous_midpoint=2)
+            #For each selected filter, add a slider for max and min and allow user to adjust
+            sliders = {}
+            def display_sliders():
+                for col in selected_cols:
+                    min_val = float(df_converted[col].min())
+                    max_val = float(df_converted[col].max())
+                    sliders[col] = st.slider(col, value=[min_val,max_val],min_value=min_val,max_value=max_val)
+                return sliders
             
-            st.plotly_chart(fig_par,use_container_width=True)
+            sliders = display_sliders()
 
-        st.dataframe(filtered_data, use_container_width=True,hide_index=True)
+            # Filter raw_data based on sliders
+            filtered_data = df_filtered.copy()
+            for col, slider_range in sliders.items():
+                filtered_data = filtered_data[(filtered_data[col] >= slider_range[0]) & (filtered_data[col] <= slider_range[1])]
 
-        st.markdown("""   """)
-        st.header("Data Plots",divider="blue")
+            st.markdown("""   """)
+            st.header("Resultant Data",divider="blue")
 
-        col1,col2,col3 = st.columns([0.15,0.1,0.75])
+            if len(selected_cols) > 1:
 
-        with col1:
-            col_names = filtered_data.columns.tolist()
-            col_names.append(None)
+                # Add Parrallel Coordinates Plot for all sliders in filtered data
+                fig_par =  px.parallel_coordinates(filtered_data, 
+                                    dimensions=selected_cols,
+                                    color_continuous_scale=px.colors.diverging.Tealrose,
+                                    color_continuous_midpoint=2)
+                
+                st.plotly_chart(fig_par,use_container_width=True)
 
-            x_axis = st.selectbox('X-Axis:',col_names,index=0)
+            st.dataframe(filtered_data, use_container_width=True,hide_index=True)
 
-            y_axis = st.selectbox('Y-Axis:',col_names,index=1)
+            st.markdown("""   """)
+            st.header("Data Plots",divider="blue")
 
-            c_axis = st.selectbox('Color:',col_names,index=len(col_names)-1)
+            col1,col2,col3 = st.columns([0.15,0.1,0.75])
 
-        with col3:
+            with col1:
+                col_names = filtered_data.columns.tolist()
+                col_names.append(None)
 
-            fig = px.scatter(filtered_data, x=x_axis, y=y_axis, color=c_axis)
-            st.plotly_chart(fig, use_container_width=True)
+                x_axis = st.selectbox('X-Axis:',col_names,index=0)
+
+                y_axis = st.selectbox('Y-Axis:',col_names,index=1)
+
+                c_axis = st.selectbox('Color:',col_names,index=len(col_names)-1)
+
+            with col3:
+
+                fig = px.scatter(filtered_data, x=x_axis, y=y_axis, color=c_axis)
+                st.plotly_chart(fig, use_container_width=True)
 else:
     st.write("No Data Loaded")
