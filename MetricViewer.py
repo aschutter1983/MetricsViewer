@@ -129,28 +129,18 @@ if uploaded_files:
                 # Assign 'min' or 'max' to the corresponding sub_key
                 result_dict[main_key][sub_key][min_max] = min_max
 
-                single_entries, other_entries = func.filter_keys_with_multiple_sub_keys(result_dict)
-
-                filtered_cols = func.flatten_dict_to_list(other_entries)
-
+    filtered_cols = []
+    
+    single_entries, other_entries = func.filter_keys_with_multiple_sub_keys(result_dict)
+    
+    filtered_cols = func.flatten_dict_to_list(other_entries)
+    
         with st.sidebar:
             st.header("Aggregation Filter",divider="blue")
 
-            # Custom CSS to change text color
-            st.markdown(
-                """
-                <style>
-                .stTreeSelect .stTreeNode .stTreeNodeLabel {
-                    color: white !important;  /* Change text color to white */
-                }
-                </style>
-                """,
-                unsafe_allow_html=True
-            )
-
             return_selected = tree_select(func.convert_to_nodes_format(single_entries),only_leaf_checkboxes=True)
 
-    filtered_cols = filtered_cols + return_selected['checked']
+    filtered_cols += return_selected['checked']
 
     df_filtered = df_converted[filtered_cols]
 
