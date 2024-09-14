@@ -66,6 +66,7 @@ if uploaded_files:
     channel_names = set()
     segments = set()
     aggregations = set()
+    results_list = []
 
     for name in raw_data.columns:
             if '_' in name:
@@ -75,6 +76,8 @@ if uploaded_files:
                 channel_names.add(parts[0])
                 segments.add(parts[1])
                 aggregations.add(parts[2])
+            else:
+                results_list.append(name)
 
     #If units are USA convert
     if units == 'USA':
@@ -95,8 +98,12 @@ if uploaded_files:
                             'Select Segments:', segments)
                    
     if selected_segments:
+        col_list = []
+        col_list = df_converted.columns[df_converted.columns.str.contains('|'.join(selected_segments))].tolist()
+        col_list += results_list
+
         #filter df to only include selected segments
-        df_converted = df_converted[df_converted.columns[df_converted.columns.str.contains('|'.join(selected_segments))]]
+        df_converted = df_converted[col_list]
         # st.dataframe(df_converted, use_container_width=True,hide_index=True)
 
         # Create an empty dictionary to store the results 
@@ -132,13 +139,13 @@ if uploaded_files:
         single_entries, other_entries = func.filter_keys_with_multiple_sub_keys(result_dict)
         
         filtered_cols = func.flatten_dict_to_list(other_entries)
-        
         with st.sidebar:
             st.header("Aggregation Filter",divider="blue")
     
             return_selected = tree_select(func.convert_to_nodes_format(single_entries),only_leaf_checkboxes=True)
 
         filtered_cols += return_selected['checked']
+        filtered_cols += results_list
 
         df_filtered = df_converted[filtered_cols]
 
