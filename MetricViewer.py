@@ -39,19 +39,27 @@ st.subheader("",divider='blue')
 # if 'user_data' not in st.session_state:  # create session state variables
 #     st.session_state['user_data'] = ''
 
+# Function to load and cache the CSV data
+@st.cache_data
+def load_csv(uploaded_file):
+    # Load the CSV into a DataFrame
+    df = pd.read_csv(uploaded_file)
+    return df
+
 with st.sidebar:
 
     st.header("Upload Data",divider="blue")
 
     uploaded_files = st.file_uploader("Choose a CSV file", type={
-                                        "csv"}, accept_multiple_files=True)
+                                        "csv"}, accept_multiple_files=False)
 
 if uploaded_files:
     #combine all uploaded files into one
-    for file in uploaded_files:
-        file.seek(0)
-    uploaded_data_read = [pd.read_csv(file) for file in uploaded_files]
-    raw_data = pd.concat(uploaded_data_read)
+    # for file in uploaded_files:
+    #     file.seek(0)
+    # uploaded_data_read = [pd.read_csv(file) for file in uploaded_files]
+    # raw_data = pd.concat(uploaded_data_read)
+    raw_data = load_csv(uploaded_files)
 
     #setup widget for units swap
     units_USA = st.toggle('Southern Units')
